@@ -1,0 +1,117 @@
+From 09f4e3e47d63ad9bbf73c204b76b305cb72b269b Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <bram.oosterhuis.nl@gmail.com>
+Date: Thu, 5 Oct 2023 20:32:00 +0200
+Subject: [PATCH] Fix build for yocto
+
+---
+ BluetoothControl/Module.h                 |  2 +-
+ Compositor/cmake/FindWaylandEGL.cmake     | 20 +++-----------------
+ Compositor/cmake/FindWaylandServer.cmake  | 18 +++---------------
+ Compositor/cmake/FindWestonServer.cmake   |  2 ++
+ Compositor/cmake/Findwayland-client.cmake |  2 +-
+ Compositor/lib/Wayland/CMakeLists.txt     |  5 +++++
+ Compositor/lib/Wayland/Westeros.cpp       |  2 +-
+ 7 files changed, 16 insertions(+), 35 deletions(-)
+
+diff --git a/BluetoothControl/Module.h b/BluetoothControl/Module.h
+index 8c661028..6bd8c0d4 100644
+--- a/BluetoothControl/Module.h
++++ b/BluetoothControl/Module.h
+@@ -23,8 +23,8 @@
+ #define MODULE_NAME Plugin_BluetoothControl
+ #endif
+ 
+-#include <bluetooth/bluetooth.h>
+ #include <plugins/plugins.h>
++#include <bluetooth/bluetooth.h>
+ 
+ #undef EXTERNAL
+ #define EXTERNAL
+diff --git a/Compositor/cmake/FindWaylandEGL.cmake b/Compositor/cmake/FindWaylandEGL.cmake
+index 752a65d3..39c3dbe9 100644
+--- a/Compositor/cmake/FindWaylandEGL.cmake
++++ b/Compositor/cmake/FindWaylandEGL.cmake
+@@ -36,23 +36,9 @@ elseif(WaylandEGL_FIND_REQUIRED)
+ endif()
+ 
+ find_package(PkgConfig)
+-pkg_check_modules(WAYLAND_EGL ${_WAYLAND_EGL_MODE} wayland-egl)
+ 
+-find_library(WAYLAND_EGL_LIB NAMES wayland-egl
+-        HINTS ${WAYLAND_EGL_LIBDIR} ${WAYLAND_EGL_LIBRARY_DIRS})
++pkg_check_modules(WaylandEGL wayland-egl ${_WAYLAND_EGL_MODE} IMPORTED_TARGET GLOBAL)
+ 
+-include(FindPackageHandleStandardArgs)
+-find_package_handle_standard_args(WaylandEGL DEFAULT_MSG WAYLAND_EGL_FOUND WAYLAND_EGL_INCLUDE_DIRS WAYLAND_EGL_LIBRARIES WAYLAND_EGL_LIB)
+-mark_as_advanced(WAYLAND_EGL_INCLUDE_DIRS WAYLAND_EGL_LIBRARIES)
+-
+-if(WaylandEGL_FOUND AND NOT TARGET WaylandEGL::WaylandEGL)
+-    add_library(WaylandEGL::WaylandEGL UNKNOWN IMPORTED)
+-    set_target_properties(WaylandEGL::WaylandEGL PROPERTIES
+-            IMPORTED_LOCATION "${WAYLAND_EGL_LIB}"
+-            INTERFACE_LINK_LIBRARIES "${WAYLAND_EGL_LIBRARIES}"
+-            INTERFACE_COMPILE_OPTIONS "${WAYLAND_EGL_DEFINITIONS}"
+-            INTERFACE_INCLUDE_DIRECTORIES "${WAYLAND_EGL_INCLUDE_DIRS}"
+-            )
++if(WaylandEGL_FOUND)
++add_library(WaylandEGL::WaylandEGL ALIAS PkgConfig::WaylandEGL)
+ endif()
+-
+-
+diff --git a/Compositor/cmake/FindWaylandServer.cmake b/Compositor/cmake/FindWaylandServer.cmake
+index a662a0a3..be5adb3d 100644
+--- a/Compositor/cmake/FindWaylandServer.cmake
++++ b/Compositor/cmake/FindWaylandServer.cmake
+@@ -36,21 +36,9 @@ elseif(WaylandServer_FIND_REQUIRED)
+ endif()
+ 
+ find_package(PkgConfig)
+-pkg_check_modules(WAYLANDSERVER ${_WAYLAND_SERVER_MODE} wayland-server)
+ 
+-find_library(WAYLANDSERVER_LIB NAMES wayland-client
+-        HINTS ${WAYLANDSERVER_LIBDIR} ${WAYLANDSERVER_LIBRARY_DIRS})
++pkg_check_modules(WaylandServer wayland-server ${_WAYLAND_SERVER_MODE} IMPORTED_TARGET GLOBAL)
+ 
+-include(FindPackageHandleStandardArgs)
+-find_package_handle_standard_args(WaylandServer DEFAULT_MSG WAYLANDSERVER_FOUND WAYLANDSERVER_INCLUDE_DIRS WAYLANDSERVER_LIBRARIES WAYLANDSERVER_LIB)
+-mark_as_advanced(WAYLANDSERVER_INCLUDE_DIRS WAYLANDSERVER_LIBRARIES)
+-
+-if(WaylandServer_FOUND AND NOT TARGET WaylandServer::WaylandServer)
+-    add_library(WaylandServer::WaylandServer UNKNOWN IMPORTED)
+-    set_target_properties(WaylandServer::WaylandServer PROPERTIES
+-            IMPORTED_LOCATION "${WAYLANDSERVER_LIB}"
+-            INTERFACE_LINK_LIBRARIES "${WAYLANDSERVER_LIBRARIES}"
+-            INTERFACE_COMPILE_OPTIONS "${WAYLANDSERVER_CFLAGS_OTHER}"
+-            INTERFACE_INCLUDE_DIRECTORIES "${WAYLANDSERVER_INCLUDE_DIRS}"
+-            )
++if(WaylandServer_FOUND)
++add_library(WaylandServer::WaylandServer ALIAS PkgConfig::WaylandServer)
+ endif()
+diff --git a/Compositor/cmake/FindWestonServer.cmake b/Compositor/cmake/FindWestonServer.cmake
+index f780eaca..c327f803 100644
+--- a/Compositor/cmake/FindWestonServer.cmake
++++ b/Compositor/cmake/FindWestonServer.cmake
+@@ -46,6 +46,8 @@ find_library(WESTON_SERVER_DESKTOP_LIB libweston-desktop-8.so
+ find_library(WESTON_SERVER_EXECLIB NAMES libexec_weston.so
+         HINTS ${PC_WESTON_SERVER_LIBEXEC_LIBDIR}/weston ${PC_WESTON_SERVER_LIBEXEC_LIBRARY_DIRS}/weston)
+ 
++message(STATUS "PC_WESTON_SERVER_INCLUDE_DIRS ${PC_WESTON_SERVER_INCLUDE_DIRS}")
++
+ set(WESTON_SERVER_LIBRARIES "${WESTON_SERVER_LIB}" "${WESTON_SERVER_EXECLIB}" "${WESTON_SERVER_DESKTOP_LIB}")
+ 
+ mark_as_advanced(WESTON_SERVER_INCLUDE_DIRS WESTON_SERVER_LIBRARIES)
+diff --git a/Compositor/cmake/Findwayland-client.cmake b/Compositor/cmake/Findwayland-client.cmake
+index abc02054..a7ef5abc 100644
+--- a/Compositor/cmake/Findwayland-client.cmake
++++ b/Compositor/cmake/Findwayland-client.cmake
+@@ -32,7 +32,7 @@ endif()
+ 
+ find_package(PkgConfig)
+ 
+-pkg_check_modules(wayland-client wayland-client ${FIND_MODE} IMPORTED_TARGET)
++pkg_check_modules(wayland-client wayland-client ${FIND_MODE} IMPORTED_TARGET GLOBAL)
+ 
+ if(wayland-client_FOUND)
+ add_library(wayland-client::wayland-client ALIAS PkgConfig::wayland-client)
+2.34.1
+
