@@ -1,4 +1,4 @@
-FILESEXTRAPATHS_prepend := "${THISDIR}/gstreamer1.0-omx-1.16:"
+FILESEXTRAPATHS:prepend := "${THISDIR}/gstreamer1.0-omx-1.16:"
 
 # in upstream meta-raspberrypi but not needed?
 SRC_URI:remove= "file://0004-Properly-handle-drain-requests-while-flushing.patch"

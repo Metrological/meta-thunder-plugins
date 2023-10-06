@@ -3,7 +3,7 @@ HOMEPAGE = "https://developer.amazon.com/en-IN/alexa/devices/alexa-built-in/deve
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.TXT;md5=8af6ce427017dadf03f47608d86f3716"
 
-FILESEXTRAPATHS_prepend:= "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend:= "${THISDIR}/files:"
 
 DEPENDS:append = " nodejs-native apl-client-library avs-device-sdk rapidjson"
 

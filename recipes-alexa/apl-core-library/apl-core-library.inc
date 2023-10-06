@@ -3,7 +3,7 @@ DESCRIPTION = "Recipe to build APL Core"
 LICENSE = "Apache-2.0"
 LIC_FILES_CHKSUM = "file://LICENSE.txt;md5=d92e60ee98664c54f68aa515a6169708"
 
-FILESEXTRAPATHS_prepend:= "${THISDIR}/files:"
+FILESEXTRAPATHS:prepend:= "${THISDIR}/files:"
 
 OECMAKE_GENERATOR = "Unix Makefiles"
 
