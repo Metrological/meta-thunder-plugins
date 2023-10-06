@@ -1,9 +1,0 @@
-do_install_append() {
-    install -Dm 644 ${WORKDIR}/libweston/backend.h ${D}${includedir}/libweston-8/libweston/
-    install -Dm 644 ${WORKDIR}/shared/helpers.h ${D}${includedir}/libweston-8/weston/shared/
-}
-
-
-# FILES_${PN}-dev += "${libdir}/${BPN}/libexec_weston.so"
-#FILES_${PN} = "${bindir}/weston ${bindir}/weston-terminal ${bindir}/weston-info ${bindir}/weston-launch ${bindir}/wcap-decode ${libexecdir} ${libdir}/${BPN}/*.so* ${datadir}"
-
