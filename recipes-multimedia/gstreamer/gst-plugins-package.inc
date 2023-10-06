@@ -1,4 +1,4 @@
-PACKAGESPLITFUNCS_prepend = " split_gstreamer10_packages "
+PACKAGESPLITFUNCS:prepend = " split_gstreamer10_packages "
 PACKAGESPLITFUNCS:append = " set_metapkg_rdepends "
 
 python split_gstreamer10_packages () {
