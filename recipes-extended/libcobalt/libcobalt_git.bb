@@ -97,13 +97,12 @@ do_install() {
     cp -arv --no-preserve=ownership "${S}/out/wpe/install/${COBALT_DATA}/data" "${D}${COBALT_DATA}"
 }
 
-SSTATE_DUPWHITELIST = "/"
-
 COBALT_PACKAGE = "\
     ${libdir} \
     ${COBALT_DATA} \
     ${includedir} \
 "
+
 FILES:${PN} += "${COBALT_PACKAGE}"
 FILES:${PN}-dev += "${COBALT_PACKAGE}"
 
