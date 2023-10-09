@@ -38,7 +38,6 @@ PACKAGECONFIG ?= "\
     ${@bb.utils.contains('DISTRO_FEATURES', 'systemd', 'systemd', '' ,d)} \
     ${WPE_PLATFORM} \
 "
-PACKAGECONFIG:append:dunfell = " woff2"
 
 # libsoup-3 is not available before Poky kirkstone.
 # http://git.yoctoproject.org/cgit/cgit.cgi/poky/commit/meta/recipes-support/libsoup/libsoup_3.0.1.bb?id=de296e2b2be876ca5cf2af309b710111e2b2581e
