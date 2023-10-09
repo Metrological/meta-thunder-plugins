@@ -1,5 +1,8 @@
-# Sets a default version for thunder
-RECIPE_BRANCH ?= "R4"
-SRCREV ?= "R4.4.0"
+# Gets the branch name from version number
+def GetMajorVersion(v):
+    return  v.split('.', 1)[0]
 
-PV = "${RECIPE_BRANCH}+gitr${SRCPV}"
+RECIPE_BRANCH ?= "R${@GetMajorVersion('${PV}')}"
+
+# this should point to a git tag
+SRCREV ?= "R${PV}"
