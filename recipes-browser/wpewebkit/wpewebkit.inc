@@ -6,6 +6,9 @@ BUGTRACKER = "https://bugs.webkit.org/"
 LICENSE = "BSD-2-Clause & ${@bb.utils.contains_any('LAYERSERIES_CORENAMES', 'dunfell gatesgarth hardknott honister', 'LGPL-2.0', 'LGPL-2.0-or-later', d)}"
 LIC_FILES_CHKSUM = "file://Source/WebCore/LICENSE-LGPL-2.1;md5=a778a33ef338abbaf8b8a7c36b6eec80"
 
+PROVIDES += "wpe-webkit"
+RPROVIDES:${PN} += "wpe-webkit"
+
 # WPE WebKit Common
 DEPENDS:append = " \
     libwpe \
