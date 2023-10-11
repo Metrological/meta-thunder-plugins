@@ -33,7 +33,6 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
    ``` shell
    git clone -b dunfell git://git.yoctoproject.org/poky
    git clone -b dunfell git://git.openembedded.org/openembedded-core
-   git clone -b dunfell git://git.openembedded.org/bitbake openembedded-core/bitbake
    git clone -b dunfell git://git.openembedded.org/meta-openembedded
    ``` 
 1. Get our meta layers
