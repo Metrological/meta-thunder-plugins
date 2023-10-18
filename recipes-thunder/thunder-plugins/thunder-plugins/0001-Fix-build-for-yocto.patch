@@ -100,18 +100,5 @@ index f780eaca..c327f803 100644
  set(WESTON_SERVER_LIBRARIES "${WESTON_SERVER_LIB}" "${WESTON_SERVER_EXECLIB}" "${WESTON_SERVER_DESKTOP_LIB}")
  
  mark_as_advanced(WESTON_SERVER_INCLUDE_DIRS WESTON_SERVER_LIBRARIES)
-diff --git a/Compositor/cmake/Findwayland-client.cmake b/Compositor/cmake/Findwayland-client.cmake
-index abc02054..a7ef5abc 100644
---- a/Compositor/cmake/Findwayland-client.cmake
-+++ b/Compositor/cmake/Findwayland-client.cmake
-@@ -32,7 +32,7 @@ endif()
- 
- find_package(PkgConfig)
- 
--pkg_check_modules(wayland-client wayland-client ${FIND_MODE} IMPORTED_TARGET)
-+pkg_check_modules(wayland-client wayland-client ${FIND_MODE} IMPORTED_TARGET GLOBAL)
- 
- if(wayland-client_FOUND)
- add_library(wayland-client::wayland-client ALIAS PkgConfig::wayland-client)
 2.34.1
 
