@@ -2,6 +2,7 @@ SUMMARY = "WPE Framework common plugins"
 DESCRIPTION = "Common plugins for Thunder framework"
 HOMEPAGE = "https://github.com/rdkcentral/ThunderNanoServices"
 LICENSE = "Apache-2.0"
+LIC_FILES_CHKSUM = "file://LICENSE;md5=5af0d167017273075d866c98a6159659"
 
 require ../include/version.inc
 require ../include/wpeframework-plugins.inc
