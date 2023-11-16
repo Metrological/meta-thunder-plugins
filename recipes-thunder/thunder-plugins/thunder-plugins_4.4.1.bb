@@ -1,5 +1,5 @@
 require thunder-plugins.inc
 
-SRCREV = "f5bcbf8688c60539b8805e2778f6c82435c96fbd"
+SRCREV = "07da709dcb7cfd5992066066707ba98098328b2d"
 
 SRC_URI += "file://0002-fix-Findwayland-client.patch"
