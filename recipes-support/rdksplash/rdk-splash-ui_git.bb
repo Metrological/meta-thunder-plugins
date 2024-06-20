@@ -15,18 +15,18 @@ S = "${WORKDIR}/git"
 do_compile[noexec] = "1"
 
 do_install() {
-    install -d "${D}/var/www/RDKSplashScreen"
-    cp -arv --no-preserve=ownership "${S}/dist/web"/* "${D}/var/www/RDKSplashScreen/"
+    install -d "${D}/var/www/html/RDKSplashScreen"
+    cp -arv --no-preserve=ownership "${S}/dist/web"/* "${D}/var/www/html/RDKSplashScreen/"
     if ${@bb.utils.contains("RDK_SPLASHSCREEN_OPERATOR", "", "true", "false", d)}
     then
-        install -m 0644 "${S}/dist/web/static/config/config.operator.in" "${D}/var/www/RDKSplashScreen/config.json"
-        sed -i -e "s|%operator%|${RDK_SPLASHSCREEN_OPERATOR}|g" "${D}/var/www/RDKSplashScreen/config.json"
+        install -m 0644 "${S}/dist/web/static/config/config.operator.in" "${D}/var/www/html/RDKSplashScreen/config.json"
+        sed -i -e "s|%operator%|${RDK_SPLASHSCREEN_OPERATOR}|g" "${D}/var/www/html/RDKSplashScreen/config.json"
     fi
     if ${@bb.utils.contains("RDK_SPLASHSCREEN_URL", "", "true", "false", d)}
     then
-        install -m 0644 "${S}/dist/web/static/config/config.url.in" "${D}/var/www/RDKSplashScreen/config.json"
-        sed -i -e "s|%operator%|${RDK_SPLASHSCREEN_URL}|g" "${D}/var/www/RDKSplashScreen/config.json"
+        install -m 0644 "${S}/dist/web/static/config/config.url.in" "${D}/var/www/html/RDKSplashScreen/config.json"
+        sed -i -e "s|%operator%|${RDK_SPLASHSCREEN_URL}|g" "${D}/var/www/html/RDKSplashScreen/config.json"
     fi
 }
 
-FILES:${PN} += "/var/www/RDKSplashScreen/"
+FILES:${PN} += "/var/www/html/RDKSplashScreen/"

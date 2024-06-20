@@ -24,7 +24,7 @@ PACKAGECONFIG[gstreamer] = "\
 "
 
 # GSClient settings
-ASS_SDK_JS_GUICLIENT_PATH ??= "/var/www/alexa"
+ASS_SDK_JS_GUICLIENT_PATH ??= "/var/www/html/alexa"
 PACKAGECONFIG[jsguiclient] = "\
     -DJS_GUICLIENT_ENABLE=ON \
     -DJS_GUICLIENT_INSTALL_PATH="${D}/${ASS_SDK_JS_GUICLIENT_PATH}", \

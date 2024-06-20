@@ -76,8 +76,8 @@ EXTRA_OECMAKE += "\
 do_install:append() {
     if ${@bb.utils.contains("PACKAGECONFIG", "webserver", "true", "false", d)}
     then
-      install -d ${D}/var/www
-      install -m 0755 ${WORKDIR}/index.html ${D}/var/www/
+      install -d ${D}/var/www/html
+      install -m 0755 ${WORKDIR}/index.html ${D}/var/www/html
       install -d ${D}${PLUGIN_WEBSERVER_PATH}
     fi
 }
