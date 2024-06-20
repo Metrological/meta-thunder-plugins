@@ -64,9 +64,4 @@ EXTRA_OECMAKE += "\
     -DCOMCAST_CONFIG=OFF \
 "
 
-FILES_SOLIBSDEV = ""
-FILES:${PN} += "${libdir}/wpeframework/plugins/*.so ${libdir}/*.so ${datadir}/WPEFramework/*"
-FILES:${PN}-dev += "${libdir}/cmake/*"
-
-INSANE_SKIP:${PN} += "libdir staticdev dev-so"
-INSANE_SKIP:${PN}-dbg += "libdir"
+FILES:${PN} += "${libdir}/thunder"
