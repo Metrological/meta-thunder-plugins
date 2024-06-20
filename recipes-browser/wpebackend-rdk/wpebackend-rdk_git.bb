@@ -11,7 +11,7 @@ PROVIDES += "virtual/wpebackend"
 RECIPE_BRANCH ?= "master"
 PV = "git${SRCPV}"
 SRC_URI = "git://github.com/WebPlatformForEmbedded/WPEBackend-rdk.git;branch=${RECIPE_BRANCH};protocol=https"
-SRCREV ?= "108e4ab0da043421202e3ef64e0a38d1db8b82ee"
+SRCREV ?= "49fcd194fc4d3feb8aa00e6ed4ccf521decda5b2"
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
