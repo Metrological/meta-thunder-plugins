@@ -32,7 +32,7 @@ RECIPE_BRANCH ?= "cobalt-23"
 SRC_URI = "git://git@github.com/Metrological/Cobalt.git;protocol=https;branch=${RECIPE_BRANCH}"
 SRC_URI:append = " ${@bb.utils.contains('GCC_MAJOR_VERSION', '9', '${GCC_9_PATCHLIST}', '', d)}"
 
-SRCREV ??= "df595d464dfa0056f70ad05aeb87ae8d1ae580e6"
+SRCREV ??= "e7e0af9fabb41f100cd93e8ec04c307a3b3b3a32"
 PR = "r1"
 
 PV = "${RECIPE_BRANCH}+gitr${SRCPV}"
