@@ -82,11 +82,4 @@ do_install:append() {
     fi
 }
 
-FILES_SOLIBSDEV = ""
-FILES:${PN} += "${libdir}/wpeframework/plugins/*.so ${libdir}/*.so ${datadir}/WPEFramework/* /var/www/index.html"
-FILES:${PN} += "${includedir}/WPEFramework/*"
-FILES:${PN}-dev += "${libdir}/cmake/*"
-
-INSANE_SKIP:${PN} += "libdir staticdev dev-so"
-INSANE_SKIP:${PN}-dbg += "libdir"
-
+FILES:${PN} += "${libdir}/thunder"
