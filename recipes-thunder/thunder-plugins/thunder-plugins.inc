@@ -82,4 +82,4 @@ do_install:append() {
     fi
 }
 
-FILES:${PN} += "${libdir}/thunder"
+FILES:${PN} += "${libdir}/thunder ${libdir}/wpeframework"
