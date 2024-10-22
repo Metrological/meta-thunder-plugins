@@ -31,9 +31,9 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
 1. Enter the ```source``` folder
 1. Get generic layers
    ``` shell
-   git clone -b dunfell git://git.yoctoproject.org/poky
-   git clone -b dunfell git://git.openembedded.org/openembedded-core
-   git clone -b dunfell git://git.openembedded.org/meta-openembedded
+   git clone -b scarthgap git://git.yoctoproject.org/poky
+   git clone -b scarthgap git://git.openembedded.org/openembedded-core
+   git clone -b scarthgap git://git.openembedded.org/meta-openembedded
    ``` 
 1. Get our meta layers
    ``` shell
@@ -43,7 +43,7 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
 
 1. Get a BSP layer for RaspberryPi
     ``` shell
-    git clone -b dunfell git://git.yoctoproject.org/meta-raspberrypi
+    git clone -b scarthgap git://git.yoctoproject.org/meta-raspberrypi
     ```
 1. From your work dir run ```source source/poky/oe-init-build-env ./build-rpi```
 1. Add these layers to build
