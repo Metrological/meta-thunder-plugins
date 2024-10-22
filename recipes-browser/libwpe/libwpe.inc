@@ -3,10 +3,20 @@ DESCRIPTION = "General-purpose library specifically developed for the WPE-flavor
 HOMEPAGE = "https://github.com/WebPlatformForEmbedded/libwpe"
 BUGTRACKER = "https://github.com/WebPlatformForEmbedded/libwpe/issues"
 
-DEPENDS:append = " libxkbcommon virtual/egl"
+SRC_URI ?= "https://wpewebkit.org/releases/${BPN}-${PV}.tar.xz"
 
-PROVIDES += "virtual/libwpe"
+LICENSE = "BSD-2-Clause"
+LIC_FILES_CHKSUM = "file://COPYING;md5=371a616eb4903c6cb79e9893a5f615cc"
+DEPENDS:append = " virtual/egl"
 
-inherit cmake
+PROVIDES += "virtual/libwpe"\
 
-RPROVIDES:${PN} += "virtual/libwpe"
+# Workaround build issue with RPi userland EGL libraries.
+CFLAGS:append:rpi = " ${@bb.utils.contains('MACHINE_FEATURES', 'vc4graphics', '', '-D_GNU_SOURCE', d)}"
+
+PACKAGECONFIG ??= "enable-xkb"
+PACKAGECONFIG[enable-xkb] = "-Denable-xkb=true,-Denable-xkb=false, libxkbcommon"
+
+inherit features_check pkgconfig meson
+
+REQUIRED_DISTRO_FEATURES = "opengl"
