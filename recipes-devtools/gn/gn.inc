@@ -2,7 +2,7 @@ HOMEPAGE = "https://cobalt.googlesource.com/third_party/gn/"
 SUMMARY = "GN is a meta-build system that generates build files for Ninja."
 DESCRIPTION = "GN is currently used as the build system for Chromium, Fuchsia, and related projects."
 
-LICENSE = "Chromium"
+LICENSE = "PD"
 LIC_FILES_CHKSUM = "file://LICENSE;md5=0fca02217a5d49a14dfe2d11837bb34d"
 
 DEPENDS:append = " \
