@@ -81,9 +81,15 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
    bitbake core-image-thunder -n
    ```
 
-1. Download packages ```bitbake core-image-thunder --runonly=fetch```
+1. Download packages 
+   ``` shell 
+   bitbake core-image-thunder --runonly=fetch
+   ```
 
-1. Run ```bitbake core-image-thunder``` to build the image
+1. To build the image
+   ``` shell 
+   bitbake core-image-thunder
+   ```
 
 1. Flash image file
     
