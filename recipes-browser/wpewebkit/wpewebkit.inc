@@ -11,12 +11,14 @@ RPROVIDES:${PN} += "wpe-webkit"
 
 # WPE WebKit Common
 DEPENDS:append = " \
-    libwpe \
+    libwpe virtual/wpebackend \
     bison-native ccache-native glib-2.0-native gperf-native libxml2-native ninja-native ruby-native chrpath-replacement-native \
-    cairo fontconfig freetype glib-2.0 gnutls harfbuzz icu jpeg pcre sqlite3 zlib \
+    fontconfig freetype glib-2.0 gnutls harfbuzz icu jpeg pcre sqlite3 zlib \
     ${@bb.utils.contains_any('LAYERSERIES_CORENAMES', 'dunfell gatesgarth hardknott honister', 'libsoup-2.4', 'libsoup-3.0', d)} \
-    libepoxy libpng libwebp libxml2 libxslt thunder \
+    libepoxy libpng libwebp libxml2 libxslt\
+    thunder \
     virtual/egl virtual/libgles2 \
+    cairo \
 "
 
 # unset CCACHE_DISABLE for this recipe
@@ -163,9 +165,9 @@ MPG_DEPENDENCY:morty = "gstreamer1.0-plugins-ugly-mpg123"
 MPG_DEPENDENCY:dunfell = "gstreamer1.0-plugins-good-mpg123"
 
 # Extra runtime depends
-RDEPENDS:${PN} += "\
-    virtual/wpebackend \
-"
+#RDEPENDS:${PN} += "\
+#    virtual/wpebackend \
+#"
 
 RDEPS_EXTRA ??= ""
 
@@ -212,10 +214,10 @@ RDEPS_WEBAUDIO ?= " \
     ${RDEPS_EXTRA} \
 "
 
-RDEPENDS:${PN} += "\
-    virtual/libwpe \
-    virtual/wpebackend \
-"
+#RDEPENDS:${PN} += "\
+#    virtual/libwpe \
+#    virtual/wpebackend \
+#"
 
 # Extra runtime recommends
 RRECOMMENDS:${PN} += "\

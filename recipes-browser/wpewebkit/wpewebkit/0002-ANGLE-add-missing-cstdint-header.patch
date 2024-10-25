@@ -1,0 +1,21 @@
+From c2f09d370c42477968d2ad7f3f3bfd2f7afaeb41 Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <dev@bybram.com>
+Date: Fri, 25 Oct 2024 12:09:47 +0200
+Subject: [PATCH] ANGLE: add missing cstdint header
+
+---
+ Source/ThirdParty/ANGLE/include/GLSLANG/ShaderVars.h | 1 +
+ 1 file changed, 1 insertion(+)
+
+diff --git a/Source/ThirdParty/ANGLE/include/GLSLANG/ShaderVars.h b/Source/ThirdParty/ANGLE/include/GLSLANG/ShaderVars.h
+index 18175e15c76d..28332857bcc5 100644
+--- a/Source/ThirdParty/ANGLE/include/GLSLANG/ShaderVars.h
++++ b/Source/ThirdParty/ANGLE/include/GLSLANG/ShaderVars.h
+@@ -14,6 +14,7 @@
+ #include <array>
+ #include <string>
+ #include <vector>
++#include <cstdint>
+ 
+ // This type is defined here to simplify ANGLE's integration with glslang for SPIR-V.
+ using ShCompileOptions = uint64_t;
