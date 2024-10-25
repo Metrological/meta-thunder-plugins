@@ -2,7 +2,8 @@ SUMMARY = "WPE Backend for RDK"
 DESCRIPTION = "Backend for WPE with specific support for embedded devices used on the RDK"
 HOMEPAGE = "https://github.com/WebPlatformForEmbedded/WPEBackend-rdk"
 BUGTRACKER = "https://github.com/WebPlatformForEmbedded/WPEBackend-rdk/issues"
-LICENSE = "BSD"
+
+LICENSE = "BSD-2-Clause"
 LIC_FILES_CHKSUM = "file://src/wayland/display.h;;beginline=5;endline=24;md5=b1c8cb6b0857048a21b33611f01c575a"
 
 DEPENDS:append = " libwpe glib-2.0"
@@ -12,6 +13,8 @@ RECIPE_BRANCH ?= "master"
 PV = "git${SRCPV}"
 SRC_URI = "git://github.com/WebPlatformForEmbedded/WPEBackend-rdk.git;branch=${RECIPE_BRANCH};protocol=https"
 SRCREV ?= "49fcd194fc4d3feb8aa00e6ed4ccf521decda5b2"
+SRCREV:wpeframework ?= "6f53fce68d8e6895fd25a2b18c781bfbccdcf3b0"
+
 S = "${WORKDIR}/git"
 
 inherit cmake pkgconfig
@@ -74,4 +77,4 @@ INSANE_SKIP = "dev-so"
 
 # FIXME RDEPENDS on PACKAGECONFIG is not behaving as it should
 RDEPENDS:${PN} += "${@bb.utils.contains('PACKAGECONFIG', 'wpeframework', 'xkeyboard-config', '', d)}"
-RPROVIDES:${PN} += "virtual/wpebackend"
+RPROVIDES:${PN} += "virtual-wpebackend"
