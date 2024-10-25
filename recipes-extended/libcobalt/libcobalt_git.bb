@@ -31,15 +31,18 @@ GCC_9_PATCHLIST = "file://0001-changes-for-gcc-9.patch"
 RECIPE_BRANCH ?= "cobalt-23"
 SRC_URI = "git://git@github.com/Metrological/Cobalt.git;protocol=https;branch=${RECIPE_BRANCH}"
 SRC_URI:append = " ${@bb.utils.contains('GCC_MAJOR_VERSION', '9', '${GCC_9_PATCHLIST}', '', d)}"
+SRC_URI:append = " file://0002-Stop-using-imp-python-module.patch"
 
 SRCREV ??= "e7e0af9fabb41f100cd93e8ec04c307a3b3b3a32"
+SRCREV:wpeframework = "e3d3eda2d1904eeb2b4e86245660d517e73a271c"
+
 PR = "r1"
 
 PV = "${RECIPE_BRANCH}+gitr${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-inherit python3native
+inherit features_check pkgconfig python3native
 
 # FIXME: Check wheter necessary
 PACKAGES = "${PN}"
