@@ -1,0 +1,188 @@
+From 24733774b1afa7c633f0ff7fe35b88d2b41a0872 Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <dev@bybram.com>
+Date: Fri, 25 Oct 2024 11:12:12 +0200
+Subject: [PATCH] Compositor: add weston 13 support
+
+---
+ Compositor/lib/Wayland/Weston.cpp | 75 ++++++++++++++++++++++++++++---
+ 1 file changed, 68 insertions(+), 7 deletions(-)
+
+diff --git a/Compositor/lib/Wayland/Weston.cpp b/Compositor/lib/Wayland/Weston.cpp
+index 7cafc139..06ef208d 100644
+--- a/Compositor/lib/Wayland/Weston.cpp
++++ b/Compositor/lib/Wayland/Weston.cpp
+@@ -20,11 +20,16 @@
+ #include "Wayland.h"
+ 
+ extern "C" {
++#include <libweston/version.h>
+ #include <libweston/libweston.h>
+ #include <libweston/backend.h>
+ #include <libweston/backend-drm.h>
+ #include <libweston/weston-log.h>
++#if WESTON_VERSION_MAJOR >= 12
++#include <libweston/desktop.h>
++#else
+ #include <libweston-desktop/libweston-desktop.h>
++#endif
+ #include <weston/shared/helpers.h>
+ 
+ void weston_init_process_list();
+@@ -94,25 +99,39 @@ namespace Weston {
+                     Core::Directory::Normalize(config.LogFilePath.Value()) : service->VolatilePath();
+ 
+                 CreateLogFile(string(logFilePath + config.LogFileName.Value()));
+-
++#if WESTON_VERSION_MAJOR >= 9
++                _context = weston_log_ctx_create();
++#else
+                 _context = weston_log_ctx_compositor_create();
++#endif
+                 ASSERT(_context);
+                 if (_context != nullptr) {
++#if WESTON_VERSION_MAJOR >= 9
++                    _logScope = weston_log_ctx_add_log_scope(_context, "log",
++                                "Weston and Wayland logger\n", nullptr, nullptr, nullptr);
++#else
+                     _logScope = weston_compositor_add_log_scope(_context, "log",
+                                 "Weston and Wayland logger\n", nullptr, nullptr, nullptr);
+-
++#endif
+                     SetHandler();
+                     SubscribeLogger();
+                 }
+             }
+             ~Logger() {
+                 UnSubscribeLogger();
++#if WESTON_VERSION_MAJOR >= 9
++                weston_log_ctx_destroy(_context);
++#endif
+                 _logFile.Close();
+                 _logFileHandle = nullptr;
+             }
+             void DestroyLogScope()
+             {
++#if WESTON_VERSION_MAJOR >= 9
++                weston_log_scope_destroy(_logScope);
++#else
+                 weston_compositor_log_scope_destroy(_logScope);
++#endif
+                 _logScope = nullptr;
+             }
+             struct weston_log_context* Context() const
+@@ -162,8 +181,13 @@ namespace Weston {
+             }
+             inline void UnSubscribeLogger()
+             {
++#if WESTON_VERSION_MAJOR >= 9 
++                weston_log_subscriber_destroy(_logger);
++                weston_log_subscriber_destroy(_flightRec);
++#else
+                 weston_log_subscriber_destroy_log(_logger);
+                 weston_log_subscriber_destroy_flight_rec(_flightRec);
++#endif
+             }
+             static int Log(const string& timeStamp, const char* format, va_list argp)
+             {
+@@ -529,7 +553,14 @@ namespace Weston {
+             {
+                   struct weston_view* view = nullptr;
+                   wl_list_for_each(view, &_surface->views, surface_link) {
++#if WESTON_VERSION_MAJOR >= 13
++                      struct weston_coord_global pos;
++                      pos.c = weston_coord(x, y);
++                      weston_view_set_position(view, pos);
++#else
+                       weston_view_set_position(view, x, y);
++#endif
++                    
+                       weston_view_set_mask(view, 0, 0, w, h);
+                       weston_surface_damage(view->surface);
+                   }
+@@ -883,18 +914,30 @@ namespace Weston {
+                 struct weston_compositor* compositor = parent->PlatformCompositor();
+                 weston_compositor_add_heads_changed_listener(compositor, &_listener);
+ 
++#if WESTON_VERSION_MAJOR <= 10
+                 auto tty = _tty.begin();
+                 for (;tty != _tty.end();++tty) {
+                     config.tty = *tty;
+-                    if (weston_compositor_load_backend(compositor, WESTON_BACKEND_DRM, &config.base) >= 0) {
++                    if(weston_compositor_load_backend(compositor, WESTON_BACKEND_DRM, &config.base) >=  0          ) {
+                         break;
+                     }
+-                }
+-
++                }      
+                 if (tty == _tty.end()) {
+                     weston_compositor_shutdown(compositor);
+                     TRACE(Trace::Error, (_T("Failed to load DRM backend using all configured tty")));
++                }  
++#else
++#if WESTON_VERSION_MAJOR >= 13
++                if (weston_compositor_load_backend(compositor, WESTON_BACKEND_DRM, &config.base) == nullptr)
++#else
++                if (weston_compositor_load_backend(compositor, WESTON_BACKEND_DRM, &config.base) <  0) ;
++#endif                 
++                {
++                    weston_compositor_shutdown(compositor);
++                    TRACE(Trace::Error, (_T("Failed to load DRM backend")));
+                 }
++#endif         
++
+             }
+         private:
+             static uint16_t CountRemainingHeads(struct weston_output* output, struct weston_head* remaining)
+@@ -1096,7 +1139,12 @@ namespace Weston {
+ 
+                 ASSERT(output);
+                 if (output) {
+-                    output->Output = weston_compositor_create_output(_parent->PlatformCompositor(), name.c_str());
++                    output->Output = weston_compositor_create_output(_parent->PlatformCompositor(),
++#if WESTON_VERSION_MAJOR >= 10
++                                                                        nullptr,
++#endif
++                                                                        name.c_str());
++                    
+                     ASSERT(output->Output);
+                     if (output->Output) {
+                         output->Layoutput = layoutput;
+@@ -1355,8 +1403,11 @@ namespace Weston {
+ 
+             _inputController.ReleaseWPESeats();
+             wl_event_source_remove(_exitTimer);
++
++#if WESTON_VERSION_MAJOR <= 8
+             weston_compositor_tear_down(_compositor);
+             weston_log_ctx_compositor_destroy(_compositor);
++#endif  
+ 
+             weston_compositor_destroy(_compositor);
+             wl_display_destroy(_display);
+@@ -1376,7 +1427,12 @@ namespace Weston {
+ 
+                 _userData.Config = nullptr;
+                 _userData.Parent = this;
+-                _compositor = weston_compositor_create(_display, _logger.Context(), &_userData);
++                
++                _compositor = weston_compositor_create(_display, _logger.Context(), &_userData
++#if WESTON_VERSION_MAJOR >= 10
++                    , nullptr
++#endif
++                );
+                 if (_compositor != nullptr ) {
+                     _userData.WestonCompositor = _compositor;
+                     struct xkb_rule_names xkb_names = {0};
+@@ -1553,7 +1609,12 @@ namespace Weston {
+             struct weston_surface_activation_data* activationData =
+                    static_cast<struct weston_surface_activation_data*>(data);
+ 
++#if WESTON_VERSION_MAJOR >= 13
++            struct weston_surface* surface = activationData->view->surface;
++#else
+             struct weston_surface* surface = activationData->surface;
++#endif
++
+             char label[100];
+             if (surface->get_label) {
+                 int status =  surface->get_label(surface, label, sizeof(label));

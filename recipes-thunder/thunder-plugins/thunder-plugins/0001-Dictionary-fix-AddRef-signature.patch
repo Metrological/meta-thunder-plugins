@@ -1,0 +1,26 @@
+From 526e341a10b11dca38886a5173a53915ce2ab0b6 Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <dev@bybram.com>
+Date: Fri, 25 Oct 2024 11:11:25 +0200
+Subject: [PATCH] Dictionary: fix AddRef signature
+
+---
+ Dictionary/Dictionary.h | 4 ++--
+ 1 file changed, 2 insertions(+), 2 deletions(-)
+
+diff --git a/Dictionary/Dictionary.h b/Dictionary/Dictionary.h
+index 056491db..67b51e1d 100644
+--- a/Dictionary/Dictionary.h
++++ b/Dictionary/Dictionary.h
+@@ -134,10 +134,10 @@ namespace Plugin {
+             }
+             // IUnknown implementation
+             // -----------------------------------------------
+-            void AddRef() const override
++            uint32_t AddRef() const override
+             {
+                 ASSERT(_lifeTime != nullptr);
+-                _lifeTime->AddRef();
++                return _lifeTime->AddRef();
+             }
+             uint32_t Release() const override
+             {

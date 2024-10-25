@@ -10,13 +10,18 @@ require ../include/wpeframework-plugins.inc
 PROVIDES += "wpeframework-plugins"
 RPROVIDES:${PN} += "wpeframework-plugins"
 
-SRC_URI = "\
-    git://github.com/rdkcentral/ThunderNanoServices.git;protocol=https;branch=${RECIPE_BRANCH} \
-    file://index.html \
-    file://osmc-devinput-remote.json \
-    file://0001-westeros-preload-libwesteros_gl.so.0.0.0.patch \
-    file://0001-Fix-build-for-yocto.patch \
-"
+SRC_URI = "git://github.com/rdkcentral/ThunderNanoServices.git;protocol=https;branch=${RECIPE_BRANCH} \
+           file://index.html \
+           file://osmc-devinput-remote.json \
+           file://0001-westeros-preload-libwesteros_gl.so.0.0.0.patch \
+           file://0001-Fix-build-for-yocto.patch \
+           file://0001-Dictionary-fix-AddRef-signature.patch \
+           file://0002-Compositor-add-weston-13-support.patch \
+           "
+
+SRC_URI:append:scarthgap = "\
+           file://0003-Compositor-fix-and-upgrade-weston-find-script.patch \
+           "
 
 # More complicated plugins are moved seperate includes
 
