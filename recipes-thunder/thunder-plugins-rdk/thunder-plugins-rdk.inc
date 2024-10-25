@@ -63,5 +63,3 @@ EXTRA_OECMAKE += "\
     -DBUILD_REFERENCE=${SRCREV} \
     -DCOMCAST_CONFIG=OFF \
 "
-
-FILES:${PN} += "${libdir}/thunder ${libdir}/wpeframework"

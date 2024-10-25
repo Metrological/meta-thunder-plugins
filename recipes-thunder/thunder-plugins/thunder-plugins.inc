@@ -81,5 +81,3 @@ do_install:append() {
       install -d ${D}${PLUGIN_WEBSERVER_PATH}
     fi
 }
-
-FILES:${PN} += "${libdir}/thunder ${libdir}/wpeframework"
