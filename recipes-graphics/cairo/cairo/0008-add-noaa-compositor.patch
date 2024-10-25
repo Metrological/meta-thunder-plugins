@@ -1,3 +1,17 @@
+From 4d6d40e297aaa8bb80e1c3a9ef145297ede33d5f Mon Sep 17 00:00:00 2001
+From: Eric Stobbart <eric_stobbart@comcast.com>
+Date: Sun, 17 Feb 2019 05:22:41 -0800
+Subject: [PATCH] add noaa compositor
+Upstream-Status: Pending
+
+---
+ src/Makefile.sources           |   3 +-
+ src/cairo-gl-device.c          |  33 +-
+ src/cairo-gl-noaa-compositor.c | 923 +++++++++++++++++++++++++++++++++++++++++
+ src/cairo-gl-private.h         |   8 +
+ 4 files changed, 957 insertions(+), 10 deletions(-)
+ create mode 100644 src/cairo-gl-noaa-compositor.c
+
 diff --git a/src/Makefile.sources b/src/Makefile.sources
 index fac24d7..9cbc14b 100644
 --- a/src/Makefile.sources

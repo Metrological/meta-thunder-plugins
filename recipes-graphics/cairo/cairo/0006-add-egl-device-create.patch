@@ -1,19 +1,18 @@
-From a4e0daf18bf8252463f66d75eef499cfffa32565 Mon Sep 17 00:00:00 2001
+From 92bc1a821496c685cbcf1d4a8504e52ae452e27f Mon Sep 17 00:00:00 2001
 From: Zan Dobersek <zdobersek@igalia.com>
 Date: Mon, 17 Nov 2014 01:23:15 -0800
 Subject: [PATCH] Add cairo_egl_device_create_for_egl_surface().
-
----
 Upstream-Status: Pending
 
- src/cairo-egl-context.c | 66 ++++++++++++++++++++++++++++++++++++++++++-------
- src/cairo-gl.h          |  3 +++
+---
+ src/cairo-egl-context.c | 66 +++++++++++++++++++++++++++++++++++------
+ src/cairo-gl.h          |  3 ++
  2 files changed, 60 insertions(+), 9 deletions(-)
 
-Index: cairo-1.14.6/src/cairo-egl-context.c
-===================================================================
---- cairo-1.14.6.orig/src/cairo-egl-context.c
-+++ cairo-1.14.6/src/cairo-egl-context.c
+diff --git a/src/cairo-egl-context.c b/src/cairo-egl-context.c
+index bf704c6..be2bcf9 100644
+--- a/src/cairo-egl-context.c
++++ b/src/cairo-egl-context.c
 @@ -48,7 +48,8 @@ typedef struct _cairo_egl_context {
      EGLDisplay display;
      EGLContext context;
@@ -24,7 +23,7 @@ Index: cairo-1.14.6/src/cairo-egl-context.c
  
      EGLContext previous_context;
      EGLSurface previous_surface;
-@@ -74,7 +75,7 @@ _egl_get_current_surface (cairo_egl_cont
+@@ -74,7 +75,7 @@ _egl_get_current_surface (cairo_egl_context_t *ctx)
  {
      if (ctx->base.current_target == NULL ||
          _cairo_gl_surface_is_texture (ctx->base.current_target)) {
@@ -44,7 +43,7 @@ Index: cairo-1.14.6/src/cairo-egl-context.c
  }
  
  static cairo_bool_t
-@@ -218,13 +219,14 @@ cairo_egl_device_create (EGLDisplay dpy,
+@@ -218,13 +219,14 @@ cairo_egl_device_create (EGLDisplay dpy, EGLContext egl)
  	eglQueryContext (dpy, egl, EGL_CONFIG_ID, &config_attribs[1]);
  	eglChooseConfig (dpy, config_attribs, &config, 1, &numConfigs);
  
@@ -62,7 +61,7 @@ Index: cairo-1.14.6/src/cairo-egl-context.c
  	    free (ctx);
  	    return _cairo_gl_context_create_in_error (CAIRO_STATUS_NO_MEMORY);
  	}
-@@ -238,8 +240,54 @@ cairo_egl_device_create (EGLDisplay dpy,
+@@ -238,8 +240,54 @@ cairo_egl_device_create (EGLDisplay dpy, EGLContext egl)
  
      status = _cairo_gl_context_init (&ctx->base);
      if (unlikely (status)) {
@@ -119,11 +118,11 @@ Index: cairo-1.14.6/src/cairo-egl-context.c
  	free (ctx);
  	return _cairo_gl_context_create_in_error (status);
      }
-Index: cairo-1.14.6/src/cairo-gl.h
-===================================================================
---- cairo-1.14.6.orig/src/cairo-gl.h
-+++ cairo-1.14.6/src/cairo-gl.h
-@@ -132,6 +132,9 @@ cairo_gl_surface_create_for_dc (cairo_de
+diff --git a/src/cairo-gl.h b/src/cairo-gl.h
+index 7cd869c..4d87f2f 100644
+--- a/src/cairo-gl.h
++++ b/src/cairo-gl.h
+@@ -132,6 +132,9 @@ cairo_gl_surface_create_for_dc (cairo_device_t		*device,
  cairo_public cairo_device_t *
  cairo_egl_device_create (EGLDisplay dpy, EGLContext egl);
  

@@ -1,8 +1,18 @@
+From f51c54fc525fccba556fb92250aabfee294388d6 Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <dev@bybram.com>
+Date: Fri, 25 Oct 2024 10:01:39 +0200
+Subject: [PATCH] error-check-just-in-debug
+Upstream-Status: Pending
+
+---
+ src/cairo-gl-private.h | 4 ++++
+ 1 file changed, 4 insertions(+)
+
 diff --git a/src/cairo-gl-private.h b/src/cairo-gl-private.h
-index ab87de9..60b81f8 100644
+index f02a587..0724520 100644
 --- a/src/cairo-gl-private.h
 +++ b/src/cairo-gl-private.h
-@@ -412,12 +412,16 @@ typedef struct _cairo_gl_font {
+@@ -420,12 +420,16 @@ typedef struct _cairo_gl_font {
  static cairo_always_inline GLenum
  _cairo_gl_get_error (void)
  {
