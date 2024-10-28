@@ -45,7 +45,10 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
     ``` shell
     git clone -b scarthgap git://git.yoctoproject.org/meta-raspberrypi
     ```
-1. From your work dir run ```source source/poky/oe-init-build-env ./build-rpi```
+1. From your work dir run 
+   ``` shell 
+   source source/poky/oe-init-build-env ./build-rpi
+   ```
 1. Add these layers to build
     ``` shell
     bitbake-layers add-layer ../source/meta-openembedded/meta-oe
