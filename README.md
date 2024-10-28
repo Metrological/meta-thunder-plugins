@@ -76,6 +76,17 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
 
    # Use weston as a compositor
    DISTRO_FEATURES:append = " weston"
+
+   # needed for compiling R4.X
+   # DISTRO_FEATURES:append =  " wpeframework"
+
+   # Enable OCDM
+   DISTRO_FEATURES:append =  " opencdm"
+   
+   # Enable DRM modules
+   # DISTRO_FEATURES:append =  " clearkey"
+   # DISTRO_FEATURES:append =  " widevine"
+   # DISTRO_FEATURES:append =  " playready"
    ```
 
 1. Check you config
