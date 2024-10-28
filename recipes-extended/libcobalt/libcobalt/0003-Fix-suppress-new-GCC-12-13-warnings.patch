@@ -1,0 +1,32 @@
+From d3c9bbd7a0e8f8722fac76b0b5cf03fa9ddbff2b Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <dev@bybram.com>
+Date: Mon, 28 Oct 2024 15:12:10 +0100
+Subject: [PATCH] Fix/suppress new GCC 12/13 warnings
+
+---
+ cobalt/loader/image/image_data_decoder.cc | 9 +++++++--
+ 1 file changed, 7 insertions(+), 2 deletions(-)
+
+diff --git a/cobalt/loader/image/image_data_decoder.cc b/cobalt/loader/image/image_data_decoder.cc
+index 0a19fdff76..cfcc08d185 100644
+--- a/cobalt/loader/image/image_data_decoder.cc
++++ b/cobalt/loader/image/image_data_decoder.cc
+@@ -59,11 +59,16 @@ void ImageDataDecoder::DecodeChunk(const uint8* data, size_t size) {
+       DCHECK_GE(kMaxBufferSizeBytes, data_buffer_.size());
+       size_t fill_buffer_size =
+           std::min(kMaxBufferSizeBytes - data_buffer_.size(), size - offset);
+-
++#if (__GNUC__ >= 4)
++#pragma GCC diagnostic push
++#pragma GCC diagnostic ignored "-Wstringop-overflow"
++#endif
+       // Append new data to data_buffer
+       data_buffer_.insert(data_buffer_.end(), data + offset,
+                           data + offset + fill_buffer_size);
+-
++#if (__GNUC__ >= 4)
++#pragma GCC diagnostic pop
++#endif
+       input_bytes = &data_buffer_[0];
+       input_size = data_buffer_.size();
+       offset += fill_buffer_size;

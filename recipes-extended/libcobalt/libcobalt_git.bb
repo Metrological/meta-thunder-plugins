@@ -29,9 +29,14 @@ GCC_MAJOR_VERSION = "${@oe.utils.trim_version("${GCCVERSION}", 1)}"
 GCC_9_PATCHLIST = "file://0001-changes-for-gcc-9.patch"
 
 RECIPE_BRANCH ?= "cobalt-23"
-SRC_URI = "git://git@github.com/Metrological/Cobalt.git;protocol=https;branch=${RECIPE_BRANCH}"
-SRC_URI:append = " ${@bb.utils.contains('GCC_MAJOR_VERSION', '9', '${GCC_9_PATCHLIST}', '', d)}"
-SRC_URI:append = " file://0002-Stop-using-imp-python-module.patch"
+SRC_URI = "git://git@github.com/Metrological/Cobalt.git;protocol=https;branch=${RECIPE_BRANCH} \
+           ${@bb.utils.contains('GCC_MAJOR_VERSION', '9', '${GCC_9_PATCHLIST}', '', d)} \
+           file://0001-v8-add-missing-include.patch \
+           file://0001-Remove-leftover-_env.py.patch \
+           file://0002-Stop-using-imp-python-module.-2011.patch \
+           file://0003-Fix-suppress-new-GCC-12-13-warnings.patch \
+           file://0004-fully-switch-off-OCDM-if-not-avalable.patch \
+           "
 
 SRCREV ??= "e7e0af9fabb41f100cd93e8ec04c307a3b3b3a32"
 SRCREV:wpeframework = "e3d3eda2d1904eeb2b4e86245660d517e73a271c"
@@ -79,12 +84,13 @@ do_configure() {
     export COBALT_STAGING_DIR="${STAGING_DIR_HOST}/"
     export OPENSSL_NO_ASM=1
     export COBALT_TOOLCHAIN_PREFIX="${STAGING_DIR_NATIVE}${bindir}/${TARGET_SYS}/${TARGET_PREFIX}"
-    export PYTHONPATH="${PYTHONPATH}:${S}"
+    export PYTHONPATH="${S}:${PYTHONPATH}"
     export COBALT_DATA_PATH="${COBALT_DATA}/data"
 
     cd "${S}" && "${STAGING_BINDIR_NATIVE}"/gn gen out/wpe --script-executable=python3 --args='target_platform="${COBALT_PLATFORM}" build_type="${COBALT_BUILD_TYPE}" target_cpu="${COBALT_CPU_ARCH}" is_clang=false sb_install_content_subdir="${COBALT_DATA}/data" is_video_overlay=${COBALT_VIDEO_OVERLAY}'
 }
 do_compile() {
+    export PYTHONPATH="${S}:${PYTHONPATH}"
     "${STAGING_BINDIR_NATIVE}/ninja" -C "${S}/out/wpe" cobalt_install
 }
 

@@ -1,0 +1,216 @@
+From c905013983e536886de9784976c1b37c0837d276 Mon Sep 17 00:00:00 2001
+From: Kaido Kert <kaidokert@google.com>
+Date: Tue, 28 Nov 2023 10:00:22 -0800
+Subject: [PATCH] Remove leftover _env.py (#2007)
+
+Removes _env.py legacy construct and replaces with hardcoded
+path insertion only for the entry points needed.
+
+Also removes dependency on deprecated Python `imp` module.
+
+b/312559511
+
+---
+ cobalt/bindings/_env.py                       | 34 -------------------
+ cobalt/bindings/code_generator_cobalt.py      |  7 +++-
+ cobalt/bindings/contexts.py                   |  1 -
+ cobalt/bindings/flatten_idls_test.py          |  1 -
+ cobalt/bindings/generate_conversion_header.py |  7 ++++
+ cobalt/bindings/idl_compiler_cobalt.py        |  1 -
+ cobalt/bindings/run_cobalt_bindings_tests.py  |  1 -
+ cobalt/bindings/v8c/_env.py                   | 26 --------------
+ .../v8c/generate_conversion_header_v8c.py     |  1 -
+ cobalt/bindings/v8c/idl_compiler_v8c.py       |  8 ++++-
+ 10 files changed, 20 insertions(+), 67 deletions(-)
+ delete mode 100644 cobalt/bindings/_env.py
+ delete mode 100644 cobalt/bindings/v8c/_env.py
+
+diff --git a/cobalt/bindings/_env.py b/cobalt/bindings/_env.py
+deleted file mode 100644
+index 4b705c2597..0000000000
+--- a/cobalt/bindings/_env.py
++++ /dev/null
+@@ -1,34 +0,0 @@
+-#
+-# Copyright 2017 The Cobalt Authors. All Rights Reserved.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-"""Sets PYTHONPATH for third_party/blink modules to work correctly."""
+-
+-from os import path
+-import sys
+-
+-_REPO_ROOT = path.abspath(
+-    path.join(path.dirname(__file__), path.pardir, path.pardir))
+-_BLINK_PATHS = [
+-    path.join(_REPO_ROOT, 'third_party', 'blink', 'Tools', 'Scripts'),
+-    path.join(_REPO_ROOT, 'third_party', 'blink', 'Source', 'bindings',
+-              'scripts'),
+-]
+-
+-if _REPO_ROOT not in sys.path:
+-  sys.path.insert(0, _REPO_ROOT)
+-
+-for path in _BLINK_PATHS:
+-  if path not in sys.path:
+-    sys.path.append(path)
+diff --git a/cobalt/bindings/code_generator_cobalt.py b/cobalt/bindings/code_generator_cobalt.py
+index e82d1ebcd4..6c93f05a93 100644
+--- a/cobalt/bindings/code_generator_cobalt.py
++++ b/cobalt/bindings/code_generator_cobalt.py
+@@ -22,7 +22,12 @@ from datetime import date
+ import os
+ import sys
+ 
+-import _env  # pylint: disable=unused-import
++bindings_dir = os.path.join(
++    os.path.dirname(__file__),
++    '../../third_party/blink/Source/bindings/scripts')
++sys.path.insert(0, bindings_dir)
++
++# pylint:disable=wrong-import-position
+ from cobalt.bindings import path_generator
+ from cobalt.bindings.contexts import ContextBuilder
+ from cobalt.bindings.name_conversion import get_interface_name
+diff --git a/cobalt/bindings/contexts.py b/cobalt/bindings/contexts.py
+index 10b02da270..0ee0d82028 100644
+--- a/cobalt/bindings/contexts.py
++++ b/cobalt/bindings/contexts.py
+@@ -18,7 +18,6 @@ Extract the relevant information from the IdlParser objects and store them in
+ dicts that will be used by Jinja in JS bindings generation.
+ """
+ 
+-import _env  # pylint: disable=unused-import
+ from cobalt.bindings.name_conversion import capitalize_function_name
+ from cobalt.bindings.name_conversion import convert_to_cobalt_constant_name
+ from cobalt.bindings.name_conversion import convert_to_cobalt_enumeration_value
+diff --git a/cobalt/bindings/flatten_idls_test.py b/cobalt/bindings/flatten_idls_test.py
+index 2eef9f97c0..a74b03aea8 100644
+--- a/cobalt/bindings/flatten_idls_test.py
++++ b/cobalt/bindings/flatten_idls_test.py
+@@ -19,7 +19,6 @@ import os
+ import platform
+ import unittest
+ 
+-import _env  # pylint: disable=unused-import
+ from cobalt.bindings import flatten_idls
+ 
+ 
+diff --git a/cobalt/bindings/generate_conversion_header.py b/cobalt/bindings/generate_conversion_header.py
+index 69d0c1ec83..e7822f0e58 100644
+--- a/cobalt/bindings/generate_conversion_header.py
++++ b/cobalt/bindings/generate_conversion_header.py
+@@ -20,7 +20,14 @@ JavaScript values.
+ from optparse import OptionParser  # pylint: disable=deprecated-module
+ import os
+ import pickle
++import sys
+ 
++bindings_dir = os.path.join(
++    os.path.dirname(__file__),
++    '../../third_party/blink/Source/bindings/scripts')
++sys.path.insert(0, bindings_dir)
++
++# pylint:disable=wrong-import-position
+ from utilities import ComponentInfoProviderCobalt
+ from utilities import write_file
+ 
+diff --git a/cobalt/bindings/idl_compiler_cobalt.py b/cobalt/bindings/idl_compiler_cobalt.py
+index da34fe7579..e28ae1beed 100644
+--- a/cobalt/bindings/idl_compiler_cobalt.py
++++ b/cobalt/bindings/idl_compiler_cobalt.py
+@@ -21,7 +21,6 @@ from optparse import OptionParser  # pylint: disable=deprecated-module
+ import os
+ import pickle
+ 
+-import _env  # pylint: disable=unused-import
+ from idl_compiler import IdlCompiler
+ from utilities import ComponentInfoProviderCobalt
+ from utilities import idl_filename_to_interface_name
+diff --git a/cobalt/bindings/run_cobalt_bindings_tests.py b/cobalt/bindings/run_cobalt_bindings_tests.py
+index b843085da2..2bcc26b57d 100755
+--- a/cobalt/bindings/run_cobalt_bindings_tests.py
++++ b/cobalt/bindings/run_cobalt_bindings_tests.py
+@@ -25,7 +25,6 @@ Options:
+ import argparse
+ import os
+ import sys
+-import _env  # pylint: disable=unused-import
+ 
+ from cobalt.bindings.idl_compiler_cobalt import IdlCompilerCobalt
+ from cobalt.bindings.v8c.code_generator_v8c import CodeGeneratorV8c
+diff --git a/cobalt/bindings/v8c/_env.py b/cobalt/bindings/v8c/_env.py
+deleted file mode 100644
+index 332eabcef5..0000000000
+--- a/cobalt/bindings/v8c/_env.py
++++ /dev/null
+@@ -1,26 +0,0 @@
+-#
+-# Copyright 2017 The Cobalt Authors. All Rights Reserved.
+-#
+-# Licensed under the Apache License, Version 2.0 (the "License");
+-# you may not use this file except in compliance with the License.
+-# You may obtain a copy of the License at
+-#
+-#     http://www.apache.org/licenses/LICENSE-2.0
+-#
+-# Unless required by applicable law or agreed to in writing, software
+-# distributed under the License is distributed on an "AS IS" BASIS,
+-# WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+-# See the License for the specific language governing permissions and
+-# limitations under the License.
+-#
+-"""Ask the parent directory to load the project environment."""
+-
+-from imp import load_source  # pylint: disable=deprecated-module
+-from os import path
+-import sys
+-
+-_ENV = path.abspath(path.join(path.dirname(__file__), path.pardir, '_env.py'))
+-if not path.exists(_ENV):
+-  print('%s: Can\'t find repo root.\nMissing parent: %s' % (__file__, _ENV))
+-  sys.exit(1)
+-load_source('', _ENV)
+diff --git a/cobalt/bindings/v8c/generate_conversion_header_v8c.py b/cobalt/bindings/v8c/generate_conversion_header_v8c.py
+index c14dea71b5..4d48b39156 100644
+--- a/cobalt/bindings/v8c/generate_conversion_header_v8c.py
++++ b/cobalt/bindings/v8c/generate_conversion_header_v8c.py
+@@ -15,7 +15,6 @@
+ 
+ import sys
+ 
+-import _env  # pylint: disable=unused-import
+ from cobalt.bindings.generate_conversion_header import generate_header
+ from cobalt.bindings.v8c.code_generator_v8c import CodeGeneratorV8c
+ 
+diff --git a/cobalt/bindings/v8c/idl_compiler_v8c.py b/cobalt/bindings/v8c/idl_compiler_v8c.py
+index 09ca3f455b..da13a0e687 100644
+--- a/cobalt/bindings/v8c/idl_compiler_v8c.py
++++ b/cobalt/bindings/v8c/idl_compiler_v8c.py
+@@ -19,8 +19,14 @@ CodeGenerator class.
+ 
+ import logging
+ import sys
++import os
+ 
+-import _env  #pylint: disable=import-error,unused-import
++bindings_dir = os.path.join(
++    os.path.dirname(__file__),
++    '../../../third_party/blink/Source/bindings/scripts')
++sys.path.insert(0, bindings_dir)
++
++# pylint:disable=wrong-import-position
+ from cobalt.bindings.idl_compiler_cobalt import generate_bindings
+ from cobalt.bindings.v8c.code_generator_v8c import CodeGeneratorV8c
+ 

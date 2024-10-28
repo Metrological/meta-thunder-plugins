@@ -1,0 +1,136 @@
+From 696f4601535ff0b30adbd6d7eb3e64521b273254 Mon Sep 17 00:00:00 2001
+From: Bram Oosterhuis <dev@bybram.com>
+Date: Mon, 28 Oct 2024 15:12:39 +0100
+Subject: [PATCH] fully switch off OCDM if not avalable
+
+---
+ .../wpe/shared/player/player_internal.cc      | 20 +++++++++++++++++++
+ 1 file changed, 20 insertions(+)
+
+diff --git a/third_party/starboard/wpe/shared/player/player_internal.cc b/third_party/starboard/wpe/shared/player/player_internal.cc
+index f83127222f..36d49326a2 100644
+--- a/third_party/starboard/wpe/shared/player/player_internal.cc
++++ b/third_party/starboard/wpe/shared/player/player_internal.cc
+@@ -22,7 +22,9 @@
+ #include "starboard/common/mutex.h"
+ #include "starboard/thread.h"
+ #include "starboard/time.h"
++#if defined(HAS_OCDM)
+ #include "third_party/starboard/wpe/shared/drm/drm_system_ocdm.h"
++#endif
+ #include "third_party/starboard/wpe/shared/media/gst_media_utils.h"
+ #include "third_party/starboard/wpe/shared/window/window_internal.h"
+ 
+@@ -803,7 +805,9 @@ class PlayerImpl : public Player, public DrmSystemOcdm::Observer {
+   SbWindow window_;
+   SbMediaVideoCodec video_codec_;
+   SbMediaAudioCodec audio_codec_;
++#if defined(HAS_OCDM)
+   DrmSystemOcdm* drm_system_;
++#endif
+   const SbMediaAudioSampleInfo* audio_sample_info_;
+ #if SB_API_VERSION >= 11
+   const char* max_video_capabilities_;
+@@ -872,7 +876,9 @@ PlayerImpl::PlayerImpl(SbPlayer player,
+       window_(window),
+       video_codec_(video_codec),
+       audio_codec_(audio_codec),
++#if defined(HAS_OCDM)
+       drm_system_(reinterpret_cast<DrmSystemOcdm*>(drm_system)),
++#endif
+       audio_sample_info_(audio_sample_info),
+ #if SB_API_VERSION >= 11
+       max_video_capabilities_(max_video_capabilities),
+@@ -882,8 +888,10 @@ PlayerImpl::PlayerImpl(SbPlayer player,
+       player_status_func_(player_status_func),
+       player_error_func_(player_error_func),
+       context_(context) {
++#if defined(HAS_OCDM)
+   if (drm_system_)
+     drm_system_->AddObserver(this);
++#endif
+ 
+   GST_DEBUG_CATEGORY_INIT(cobalt_gst_player_debug, "gstplayer", 0,
+                           "Cobalt player");
+@@ -995,8 +1003,10 @@ PlayerImpl::~PlayerImpl() {
+   g_main_loop_unref(main_loop_);
+   g_main_context_unref(main_loop_context_);
+   g_object_unref(pipeline_);
++#if defined(HAS_OCDM)
+   if (drm_system_)
+     drm_system_->RemoveObserver(this);
++#endif
+   window_->DestroyVideoOverlay(video_overlay_);
+   GST_DEBUG("BYE BYE player");
+ }
+@@ -1124,12 +1134,14 @@ gboolean PlayerImpl::BusMessageCallback(GstBus* bus,
+             GST_INFO("===> Writing pending samples");
+             self->OnKeyReady(reinterpret_cast<const uint8_t*>(kClearSamplesKey),
+                              strlen(kClearSamplesKey));
++#if defined(HAS_OCDM)
+             if (self->drm_system_) {
+               auto ready_keys = self->drm_system_->GetReadyKeys();
+               for (auto& key : ready_keys) {
+                 self->OnKeyReady(reinterpret_cast<const uint8_t*>(key.c_str()),
+                                  key.size());
+               }
++#endif
+             }
+             {
+               ::starboard::ScopedLock lock(self->mutex_);
+@@ -1428,6 +1440,7 @@ bool PlayerImpl::WriteSample(SbMediaType sample_type,
+                    buffer);
+ 
+   bool decrypted = true;
++  #if defined(HAS_OCDM)
+   if (!session_id.empty()) {
+     GST_LOG_OBJECT(src, "Decrypting using %s...", session_id.c_str());
+     DCHECK(drm_system_);
+@@ -1435,6 +1448,7 @@ bool PlayerImpl::WriteSample(SbMediaType sample_type,
+     if (!decrypted)
+       GST_ERROR_OBJECT(src, "Failed decrypting");
+   }
++  #endif
+ 
+   if (decrypted)
+     gst_app_src_push_buffer(GST_APP_SRC(src), buffer);
+@@ -1506,6 +1520,7 @@ void PlayerImpl::WriteSample(SbMediaType sample_type,
+     ::starboard::ScopedLock lock(mutex_);
+     keep_samples = is_seek_pending_ || pending_rate_ != .0;
+   }
++#if defined(HAS_OCDM)
+   if (sample_infos[0].drm_info) {
+     DCHECK(drm_system_);
+     if (drm_system_)
+@@ -1526,6 +1541,7 @@ void PlayerImpl::WriteSample(SbMediaType sample_type,
+     }
+   } else {
+     GST_TRACE("Encounterd clear sample");
++#endif
+     if (keep_samples) {
+       ::starboard::ScopedLock lock(mutex_);
+       GST_INFO("Pending flushing operation. Storing sample");
+@@ -1533,7 +1549,9 @@ void PlayerImpl::WriteSample(SbMediaType sample_type,
+       PendingSample sample(sample_type, buffer, nullptr);
+       key_str = {kClearSamplesKey};
+       pending_[key_str].emplace_back(std::move(sample));
++#if defined(HAS_OCDM)
+     }
++#endif
+   }
+ 
+   if (keep_samples) {
+@@ -1870,11 +1888,13 @@ void PlayerImpl::OnKeyReady(const uint8_t* key, size_t key_len) {
+   }
+ 
+   if (iter != pending_.end()) {
++#if defined(HAS_OCDM)
+     std::string session_id;
+     if (drm_system_) {
+       session_id = drm_system_->SessionIdByKeyId(key, key_len);
+       DCHECK(!session_id.empty());
+     }
++#endif
+ 
+     PendingSamples local_samples;
+     {
