@@ -17,4 +17,4 @@ WPE_OPENCDMI_WIDEVINE_CENC_VERSION ??= "15"
 PACKAGECONFIG[opencdmi_widevine_cenc_version] = "-DCENC_VERSION=${WPE_OPENCDMI_WIDEVINE_CENC_VERSION}"
 
 FILES:${PN} = "${datadir}/WPEFramework/OCDM/*.drm"
-
+FILES:${PN}:append = " ${datadir}/Thunder/OCDM/*.drm"

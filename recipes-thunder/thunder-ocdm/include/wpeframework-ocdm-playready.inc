@@ -11,8 +11,9 @@ DEPENDS:append = " playready"
 
 EXTRA_OECMAKE += "-DPERSISTENT_PATH=${THUNDER_PERSISTENT_PATH}"
 
-FILES:${PN} += "\
-    ${datadir}/WPEFramework/OCDM/Playready.drm \
+FILES:${PN} = "\
+    ${datadir}/WPEFramework/OCDM/*.drm \
     ${THUNDER_PERSISTENT_PATH} \
 "
 
+FILES:${PN}:append = " ${datadir}/Thunder/OCDM/*.drm"

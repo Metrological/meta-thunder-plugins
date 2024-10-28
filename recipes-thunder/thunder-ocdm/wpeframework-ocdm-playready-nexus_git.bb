@@ -14,4 +14,4 @@ SRC_URI = "git://code.rdkcentral.com/r/soc/broadcom/components/rdkcentral/OCDM-P
 SRCREV ?= "9b5edbd1bdb756dc0f8aec1ff224c403d456cad5"
 
 FILES:${PN} = "${datadir}/WPEFramework/OCDM/*.drm"
-
+FILES:${PN}:append = " ${datadir}/Thunder/OCDM/*.drm"
