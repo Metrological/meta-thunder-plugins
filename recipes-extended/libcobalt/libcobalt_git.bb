@@ -16,7 +16,7 @@ DEPENDS:append = " \
     gstreamer1.0-plugins-bad \
     gstreamer1.0-plugins-base \
     gstreamer1.0-plugins-good \
-    wpeframework-clientlibraries \
+    thunder-clientlibraries \
     ccache-native \
     gn-native \
     ninja-native \
