@@ -7,7 +7,7 @@ LIC_FILES_CHKSUM = "file://LICENSE;md5=4ff33b11769ba14c6093567cd25ff3b2"
 RDK_SPLASHSCREEN_URL ??= ""
 RDK_SPLASHSCREEN_OPERATOR ??= "Metrological"
 
-SRC_URI = "git://github.com/rdkcentral/RDKSplashScreen.git;protocol=https"
+SRC_URI = "git://github.com/rdkcentral/RDKSplashScreen.git;protocol=https;branch=master"
 SRCREV = "7bf07c35cc531cd306c525b554310c48b3558138"
 
 S = "${WORKDIR}/git"
