@@ -47,7 +47,7 @@ PV = "${RECIPE_BRANCH}+gitr${SRCPV}"
 
 S = "${WORKDIR}/git"
 
-inherit features_check pkgconfig python3native
+inherit pkgconfig python3native
 
 # FIXME: Check wheter necessary
 PACKAGES = "${PN}"
