@@ -89,10 +89,15 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
    # DISTRO_FEATURES:append =  " playready"
    ```
 
-1. Check you config
+1. Check your config
    ``` shell
    bitbake-layers show-layers
    bitbake core-image-thunder -n
+   ```
+
+1. If you get: ERROR: PermissionError: [Errno 1] Operation not permitted
+   ``` shell
+   sudo apparmor_parser -R /etc/apparmor.d/unprivileged_userns
    ```
 
 1. Download packages 
