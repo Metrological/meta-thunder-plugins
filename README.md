@@ -75,7 +75,10 @@ To get started with `meta-thunder-plugins` and begin building thunder based appl
    PACKAGECONFIG:append:pn-thunder-clientlibraries = " deviceinfo"
 
    # Use weston as a compositor
-   DISTRO_FEATURES:append = " weston"
+   # DISTRO_FEATURES:append = " weston"
+
+   # Use the MESA compositor
+   DISTRO_FEATURES:remove = "wayland"
 
    # needed for compiling R4.X
    # DISTRO_FEATURES:append =  " wpeframework"
