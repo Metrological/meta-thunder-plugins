@@ -10,6 +10,7 @@ WPE_COMPOSITOR_VIRTUALINPUT ??= "ON"
 WPE_COMPOSITOR_CURSOR_FILE ??= ""
 
 PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', 'compositor_wayland', '', d)}"
+PACKAGECONFIG:append = " ${@bb.utils.contains('DISTRO_FEATURES', 'wayland', '', bb.utils.contains('PREFERRED_PROVIDER_virtual/mesa', 'mesa', 'compositor_mesa', '', d), d)}"
 
 # Choose westeros or weston dependency
 WPE_COMPOSITOR_WAYLAND_SUB_IMPL ??= "${@bb.utils.contains('DISTRO_FEATURES', 'weston', 'Weston', 'Westeros', d)}"
@@ -37,6 +38,18 @@ PACKAGECONFIG[compositor_wayland] = "\
     -DPLUGIN_COMPOSITOR_CURSOR_FILE=${WPE_COMPOSITOR_CURSOR_FILE} \
     -DPLUGIN_COMPOSITOR_VIRTUALINPUT=${WPE_COMPOSITOR_VIRTUALINPUT} \
     ,,${WPE_COMPOSITOR_WAYLAND_DEP} \
+"
+# To select the Mesa compositor:
+# Remove Wayland from DISTRO_FEATURES in local.conf:
+# DISTRO_FEATURES:remove = "wayland"
+PACKAGECONFIG[compositor_mesa] = "\
+    -DPLUGIN_COMPOSITOR_IMPLEMENTATION='Mesa' \
+    -DCOMPOSITOR_BACKEND_IMPLEMENTATION='DRM' \
+    -DCOMPOSITOR_BUFFER_IMPLEMENTATION='GBM' \
+    -DPLUGIN_COMPOSITOR_RENDER_NODE='/dev/dri/renderD128' \
+    -DPLUGIN_COMPOSITOR_THREAD_COUNT='2' \
+    -DENABLE_ATOMIC='ON' \
+    ,,libdrm mesa \
 "
 
 PACKAGECONFIG[vc4graphics] = "-DVC6=ON,,libdrm mesa"
