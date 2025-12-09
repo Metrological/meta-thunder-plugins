@@ -15,7 +15,6 @@ SRC_URI = "git://github.com/rdkcentral/ThunderNanoServices.git;protocol=https;br
            file://osmc-devinput-remote.json \
            file://0001-westeros-preload-libwesteros_gl.so.0.0.0.patch \
            file://0001-Fix-build-for-yocto.patch \
-           file://0001-Dictionary-fix-AddRef-signature.patch \
            file://0002-Compositor-add-weston-13-support.patch \
            "
 
@@ -69,8 +68,9 @@ PACKAGECONFIG ??= "\
     ${@bb.utils.contains('DISTRO_FEATURES', 'thunder', 'network', '', d)} \
     ${@bb.utils.contains('MACHINE_FEATURES', 'wifi', 'network wifi', '', d)} \
     ${@bb.utils.contains('STREAMER_DISTRO_PACKAGE_AVAILABLE', 'True', 'streamer', '', d)} \
-    cobalt dhcpserver dictionary ioconnector remote remote-devinput systemcommands timesync webserver \
-    webpa webpa_generic webpa_generic_deviceinfo webpa_ccsp\
+    ${@bb.utils.contains('DISTRO_FEATURES', 'cobalt', 'cobalt', '', d)} \
+    ${@bb.utils.contains('DISTRO_FEATURES', 'webpa', 'webpa webpa_generic webpa_generic_deviceinfo webpa_ccsp', '', d)} \
+    dhcpserver dictionary ioconnector remote systemcommands timesync webserver \
 "
 
 EXTRA_OECMAKE += "\

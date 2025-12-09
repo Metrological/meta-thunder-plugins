@@ -49,7 +49,7 @@ PACKAGECONFIG[compositor_mesa] = "\
     -DPLUGIN_COMPOSITOR_RENDER_NODE='/dev/dri/renderD128' \
     -DPLUGIN_COMPOSITOR_THREAD_COUNT='2' \
     -DENABLE_ATOMIC='ON' \
-    ,,libdrm mesa \
+    ,,libdrm mesa libpng \
 "
 
 PACKAGECONFIG[vc4graphics] = "-DVC6=ON,,libdrm mesa"

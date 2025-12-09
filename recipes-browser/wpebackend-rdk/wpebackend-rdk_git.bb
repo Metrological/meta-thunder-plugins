@@ -12,8 +12,8 @@ PROVIDES += "virtual/wpebackend"
 RECIPE_BRANCH ?= "master"
 PV = "git${SRCPV}"
 SRC_URI = "git://github.com/WebPlatformForEmbedded/WPEBackend-rdk.git;branch=${RECIPE_BRANCH};protocol=https"
-SRCREV ?= "49fcd194fc4d3feb8aa00e6ed4ccf521decda5b2"
-SRCREV:wpeframework ?= "6f53fce68d8e6895fd25a2b18c781bfbccdcf3b0"
+SRCREV ?= "dc62734a06fe26f288e69b5ef02156c0e5efea8d"
+SRCREV:wpeframework ?= "ca7ad203398b3f065f9f494b89bc12038cd24f95"
 
 S = "${WORKDIR}/git"
 
